@@ -6,6 +6,7 @@ import com.springboot.blog.Payload.PostDto;
 import com.springboot.blog.Payload.PostResponse;
 import com.springboot.blog.Repository.PostRepository;
 import com.springboot.blog.Service.PostService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,10 +23,12 @@ public class PostServiceImpl implements PostService {
 
 
     private PostRepository postRepository;
+    private ModelMapper modelMapper;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository) {
+    public PostServiceImpl(PostRepository postRepository, ModelMapper modelMapper) {
         this.postRepository = postRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -65,6 +68,7 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
         return mapToDTO(post);
     }
+
     @Override
     public PostDto updatePost(PostDto postDto, long id) {
         //get post by id from the database and if the post doesn't exist throw exception
@@ -87,24 +91,29 @@ public class PostServiceImpl implements PostService {
 
 
     private PostDto mapToDTO(Post post) {
-        PostDto postDto = new PostDto();
+        PostDto postDto = modelMapper.map(post, PostDto.class);
+
+       /* PostDto postDto = new PostDto();
         postDto.setId(post.getId());
         postDto.setTitle(post.getTitle());
         postDto.setDescription(post.getDescription());
-        postDto.setContent(post.getContent());
+        postDto.setContent(post.getContent());*/
+
         return postDto;
     }
 
 
     private Post mapToEntity(PostDto postDto) {
-        Post post = new Post();
-        post.setTitle(postDto.getTitle());
+        Post post = modelMapper.map(postDto, Post.class);
+
+       /* post.setTitle(postDto.getTitle());
         post.setDescription(postDto.getDescription());
-        post.setContent(postDto.getTitle());
+        post.setContent(postDto.getTitle());*/
+
         return post;
     }
 
-    public PostResponse createPostResponse(List<PostDto> content, int pageNumber, Page<Post> posts){
+    public PostResponse createPostResponse(List<PostDto> content, int pageNumber, Page<Post> posts) {
         PostResponse postResponse = new PostResponse();
         postResponse.setContent(content);
         postResponse.setPageNo(pageNumber);
