@@ -45,8 +45,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) ->
                         //authorize.anyRequest().authenticated())
                 authorize.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-                        .anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults());
+                        .requestMatchers("/api/auth/**").permitAll() // to provide permission to all of the users to access this url,
+                        //it means that all the rest methods we define in AuthController are permitted
+                        .anyRequest().authenticated());
 
         return http.build();
     }
