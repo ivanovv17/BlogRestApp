@@ -1,11 +1,11 @@
 package com.springboot.blog.Controller;
 
+import com.springboot.blog.Payload.JwtAuthResponse;
 import com.springboot.blog.Payload.LoginDto;
 import com.springboot.blog.Payload.RegisterDto;
 import com.springboot.blog.Service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,9 +25,12 @@ public class AuthController {
 
     //Build login REST API
     @PostMapping(value = {"/login", "/signIn"}) // how we configure multiple urls
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
-        String response = authService.login(loginDto);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginDto loginDto){
+        String token = authService.login(loginDto);
+        JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+
+        return ResponseEntity.ok(jwtAuthResponse);
     }
 
     // Build register Rest API
